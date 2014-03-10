@@ -16,7 +16,9 @@
   "dependencies": {
     "sprintf": ">=0.1.1",
     "debug": "*",
-    "js-yaml": ">=3.0.2" 
+    "js-yaml": ">=3.0.2",
+    "mustache": "*",
+    "debug": "*"
   },
   "devDependencies": {
     "mocha": ">=1.8.1",
