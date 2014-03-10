@@ -19,7 +19,7 @@ var vsprintf = require('sprintf').vsprintf,
     locales = {},
     api = ['__', '__n', 'getLocale', 'setLocale', 'getCatalog'],
     pathsep = path.sep || '/', // ---> means win support will be available in node 0.8.x and above
-    defaultLocale, updateFiles, cookiename, extension, directory, indent;
+    defaultLocale, updateFiles, cookiename, extension, directory, indent, yamlSchema;
 
 // public exports
 var i18n = exports;
@@ -53,6 +53,9 @@ i18n.configure = function i18nConfigure(opt) {
 
   // setting defaultLocale
   defaultLocale = (typeof opt.defaultLocale === 'string') ? opt.defaultLocale : 'en';
+
+  // Schema to be used for yaml files (ex: require("js-yaml/lib/js-yaml/schema/default_full"))
+  yamlSchema = opt.yamlSchema;
 
   // implicitly read all locales
   if (typeof opt.locales === 'object') {
@@ -434,7 +437,7 @@ function read(locale) {
       // parsing filecontents to locales[locale]
         switch (extension) {
           case '.yml':
-            locales[locale] = jsyaml.load(localeFile);
+            locales[locale] = jsyaml.load(localeFile, {schema: yamlSchema});
             break;
           default:
             locales[locale] = JSON.parse(localeFile);
