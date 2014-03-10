@@ -1,11 +1,11 @@
 {
-  "name": "i18n",
-  "description": "lightweight translation module with dynamic json storage",
+  "name": "i18n-yaml",
+  "description": "lightweight translation module with dynamic json storage (with yaml support",
   "version": "0.4.1",
-  "homepage": "http://github.com/mashpie/i18n-node",
+  "homepage": "https://github.com/martinheidegger/i18n-node-yaml",
   "repository": {
     "type": "git",
-    "url": "http://github.com/mashpie/i18n-node.git"
+    "url": "http://github.com/martinheidegger/i18n-node-yaml.git"
   },
   "author": "Marcus Spiegel <marcus.spiegel@gmail.com>",
   "main": "./index",
