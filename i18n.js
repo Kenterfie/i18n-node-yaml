@@ -55,7 +55,7 @@ i18n.configure = function i18nConfigure(opt) {
   defaultLocale = (typeof opt.defaultLocale === 'string') ? opt.defaultLocale : 'en';
 
   // Schema to be used for yaml files (ex: require("js-yaml/lib/js-yaml/schema/default_full"))
-  yamlSchema = opt.yamlSchema;
+  yamlSchema = opt.schema;
 
   // implicitly read all locales
   if (typeof opt.locales === 'object') {
