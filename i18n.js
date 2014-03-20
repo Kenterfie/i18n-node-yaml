@@ -389,6 +389,8 @@ function getLocaleFromObject(obj) {
  */
 
 function translate(locale, singular, plural) {
+  var result;
+
   if (locale === undefined) {
     logWarn("WARN: No locale found - check the context of the call to __(). Using " + defaultLocale + " as current locale");
     locale = defaultLocale;
@@ -406,21 +408,35 @@ function translate(locale, singular, plural) {
     read(locale);
   }
 
-  if (plural) {
-    if (!locales[locale][singular]) {
-      locales[locale][singular] = {
-        'one': singular,
-        'other': plural
-      };
-      write(locale);
+  result = locales[locale][singular];
+
+  if (!result && /\./.test(singular)) {
+    result = searchDeep(locales[locale], singular.split("."));
+    if (result) {
+      locales[locale][singular] = result;
     }
   }
 
-  if (!locales[locale][singular]) {
-    locales[locale][singular] = singular;
+  if (!result) {
+    if (plural) {
+      result = {
+        'one': singular,
+        'other': plural
+      };
+    } else {
+      result = singular;
+    }
+    locales[locale][singular] = result;
     write(locale);
   }
-  return locales[locale][singular];
+  return result;
+}
+
+function searchDeep(object, path) {
+  while(path.length > 0 && object) {
+    object = object[path.shift()];
+  }
+  return object;
 }
 
 /**
