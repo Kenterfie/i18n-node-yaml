@@ -449,7 +449,7 @@ function read(locale) {
   var ext = extension || '.json',
   filepath = path.normalize(directory + pathsep)
   files = fs.readdirSync(filepath);
-  var filerx = new RegExp(locale + '.*\\' + extension,"i");
+  var filerx = new RegExp('^' + locale + '.*\\' + extension + '$',"i");
   var l = {};
   files.forEach(function(file) {
     if(file.match(filerx)) {
