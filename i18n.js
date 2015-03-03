@@ -455,7 +455,7 @@ function read(locale) {
     if(file.match(filerx)) {
       try {
         logDebug('read ' + file + ' for locale: ' + locale);
-        localeFile = fs.readFileSync(filepath + file);
+        localeFile = fs.readFileSync(filepath + file).toString();
         try {
 	        // parsing filecontents to locales[locale]
 		      switch (extension) {
