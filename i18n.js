@@ -12,6 +12,7 @@ var vsprintf = require('sprintf').vsprintf,
     url = require('url'),
     path = require('path'),
     jsyaml = require('js-yaml'),
+    extend = require('node.extend'),
     debug = require('debug')('i18n:debug'),
     warn = require('debug')('i18n:warn'),
     error = require('debug')('i18n:error'),
@@ -444,37 +445,47 @@ function searchDeep(object, path) {
  */
 
 function read(locale) {
-  var localeFile = {},
-      file = getStorageFilePath(locale);
-  try {
-    logDebug('read ' + file + ' for locale: ' + locale);
-    localeFile = fs.readFileSync(file).toString();
-    try {
-      // parsing filecontents to locales[locale]
-        switch (extension) {
-          case '.yml':
-            locales[locale] = jsyaml.load(localeFile, {schema: yamlSchema});
-            break;
-          default:
-            locales[locale] = JSON.parse(localeFile);
+  var localeFile = {};
+  var ext = extension || '.json',
+  filepath = path.normalize(directory + pathsep)
+  files = fs.readdirSync(filepath);
+  var filerx = new RegExp(locale + '.*\\' + extension,"i");
+  var l = {};
+  files.forEach(function(file) {
+    if(file.match(filerx)) {
+      try {
+        logDebug('read ' + file + ' for locale: ' + locale);
+        localeFile = fs.readFileSync(filepath + file);
+        try {
+	        // parsing filecontents to locales[locale]
+		      switch (extension) {
+		        case '.yml':
+		          l = extend(l, jsyaml.load(localeFile, {schema: yamlSchema}));
+			      break;
+		        default:
+		          l = extend(l, JSON.parse(localeFile));
+		      }
+	      } catch (parseError) {
+	        logError('unable to parse locales from file (maybe ' + file + ' is empty or invalid '+extension+'?): ', parseError);
+	      }
+      } catch (readError) {
+        // unable to read, so intialize that file
+        // locales[locale] are already set in memory, so no extra read required
+        // or locales[locale] are empty, which initializes an empty locale.json file
+
+        // since the current invalid locale could exist, we should back it up
+        if (fs.existsSync(file)) {
+          logDebug('backing up invalid locale ' + locale + ' to ' + file + '.invalid');
+          fs.renameSync(file, file + '.invalid');
         }
-    } catch (parseError) {
-      logError('unable to parse locales from file (maybe ' + file + ' is empty or invalid '+extension+'?): ', parseError);
+
+        logDebug('initializing ' + file);
+        write(locale);
+      }
     }
-  } catch (readError) {
-    // unable to read, so intialize that file
-    // locales[locale] are already set in memory, so no extra read required
-    // or locales[locale] are empty, which initializes an empty locale.json file
-    
-    // since the current invalid locale could exist, we should back it up
-    if (fs.existsSync(file)) {
-      logDebug('backing up invalid locale ' + locale + ' to ' + file + '.invalid');
-      fs.renameSync(file, file + '.invalid');
-    }
-    
-    logDebug('initializing ' + file);
-    write(locale);
-  }
+  });
+
+  locales[locale] = l;
 }
 
 /**

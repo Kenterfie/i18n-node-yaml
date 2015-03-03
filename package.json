@@ -18,6 +18,7 @@
     "debug": "*",
     "js-yaml": ">=3.0.2",
     "mustache": "*",
+    "node.extend": "*",
     "debug": "*"
   },
   "devDependencies": {
