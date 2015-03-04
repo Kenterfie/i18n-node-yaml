@@ -20,7 +20,7 @@ var vsprintf = require('sprintf').vsprintf,
     locales = {},
     api = ['__', '__n', 'getLocale', 'setLocale', 'getCatalog'],
     pathsep = path.sep || '/', // ---> means win support will be available in node 0.8.x and above
-    defaultLocale, updateFiles, cookiename, extension, directory, indent, yamlSchema;
+    defaultLocale, preferredLocale, updateFiles, cookiename, extension, directory, indent, yamlSchema;
 
 // public exports
 var i18n = exports;
@@ -54,6 +54,8 @@ i18n.configure = function i18nConfigure(opt) {
 
   // setting defaultLocale
   defaultLocale = (typeof opt.defaultLocale === 'string') ? opt.defaultLocale : 'en';
+
+  preferredLocale = (typeof opt.preferredLocale === 'string') ? opt.preferredLocale : defaultLocale;
 
   // Schema to be used for yaml files (ex: require("js-yaml/lib/js-yaml/schema/default_full"))
   yamlSchema = opt.schema;
@@ -222,7 +224,7 @@ i18n.setLocale = function i18nSetLocale(locale_or_request, locale) {
 
     // called like setLocale('en')
     if (request === undefined) {
-      defaultLocale = target_locale;
+      preferredLocale = target_locale;
     }
     else {
       request.locale = target_locale;
@@ -244,7 +246,7 @@ i18n.getLocale = function i18nGetLocale(request) {
   }
 
   // called like getLocale()
-  return defaultLocale;
+  return preferredLocale;
 };
 
 i18n.getCatalog = function i18nGetCatalog(locale_or_request, locale) {
@@ -393,8 +395,8 @@ function translate(locale, singular, plural) {
   var result;
 
   if (locale === undefined) {
-    logWarn("WARN: No locale found - check the context of the call to __(). Using " + defaultLocale + " as current locale");
-    locale = defaultLocale;
+    logWarn("WARN: No locale found - check the context of the call to __(). Using " + preferredLocale + " as current locale");
+    locale = preferredLocale;
   }
 
   // attempt to read when defined as valid locale
