@@ -409,6 +409,12 @@ function translate(locale, singular, plural) {
     read(locale);
   }
 
+  if (!locales[locale][singular] && locale != defaultLocale) {
+    logWarn("WARN: No locale found - check the context of the call to __(). Using " + defaultLocale + " as current locale");
+    locale = defaultLocale;
+    read(locale);
+  }
+
   result = locales[locale][singular];
 
   if (!result && /\./.test(singular)) {
