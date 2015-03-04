@@ -410,7 +410,7 @@ function translate(locale, singular, plural) {
   }
 
   if (!locales[locale][singular] && locale != defaultLocale) {
-    logWarn("WARN: No locale found - check the context of the call to __(). Using " + defaultLocale + " as current locale");
+    logWarn("WARN: " + singular + " in " + locale + " not found - check the context of the call to __(). Using " + defaultLocale + " as current locale");
     locale = defaultLocale;
     read(locale);
   }
